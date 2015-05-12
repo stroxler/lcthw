@@ -1,0 +1,10 @@
+The shell script for installing valgrind by hand did not work, but it
+has good commands that are worth learning.
+
+In the exe.c file, there are two major errors on line 7, where we did
+not give an int to use, and on line 9 where we use an uninitialized int.
+
+Note what happens if you do `make grind`:
+  - the first error on line 7 produces warnings due to the -Wall flag
+  - the second error on line 9 also does; moreover valgrid complains quite a
+    bit
