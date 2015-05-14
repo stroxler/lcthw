@@ -1,0 +1,5 @@
+For most of the discussion of the object implementation(s), see the notes in
+object.h.
+
+For a discussion of the implementation of the game as a whole, see the top
+of exe.c.
