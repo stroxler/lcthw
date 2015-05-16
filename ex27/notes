@@ -1,0 +1,22 @@
+Zed's rules for defensive programming:
+
+Never Trust Input
+    Never trust the data you are given and always validate it.
+Prevent Errors
+    If an error is possible, no matter how probable, try to prevent it.
+Fail Early And Openly
+    Fail early, cleanly, and openly, stating what happened, where and how to
+    fix it.
+Document Assumptions
+    Clearly state the pre-conditions, post-conditions, and invariants.
+Prevention Over Documentation
+    Do not do with documentation, that which can be done with code or avoided
+    completely. In particular, don't document bugs - as opposed to fixing - if
+    at all possible.
+Automate Everything
+    Automate everything, especially testing.
+Simplify And Clarify
+    Always simplify the code to the smallest, cleanest form that works without
+    sacrificing safety.
+Question Authority (the antidote to the other rules)
+    Do not blindly follow or reject rules.
