@@ -1,0 +1,45 @@
+ex17: introduction to structures and file i/o. A simple database command-line
+      program where each execution is one operation. The database is an exact
+      on-disk copy of a simple in-membory database.
+       lib: files: fopen, fread, rewind, fwrite, fflush, fclose
+              mem: malloc, free, 
+              err: errno, perror, exit
+            
+ex18: bubble sort using function pointers. A good intro to the syntax, not
+      much else.
+       lib: atoi
+
+ex19: interesting introduction to a prototype-based object system which,
+      although too limited to be useful, illustrates
+       - some of how C structs work under the hood [tcp/ip uses similar ideas]
+       - C's casting rules and the way that void is used as a sort of
+         generic (I believe the code here is very illegal in C++)
+       - one mechanism of doing prototype-based oop in C... although I think
+         this is a bit clunky even for the toy problem and wouldn't work in
+         practice.
+       - multi-file modules, and use of the C preprocessor
+       - a simple architecture for making a game. Note that the Map basically
+         drives everything.
+      lib: rand, srand, getchar, calloc
+
+ex20: Zed's debug macros. They are good, use this for reference.
+
+ex21 is just a list of operators, types, etc.
+
+ex22: scope rules:
+        block scope, static vars in functions, extern global vars (and the
+        extern keyword), non-extern vars where the module provides getters and
+        setters
+
+ex23: Duff's device. It's kind of interesting, but not important; you can skip.
+      lib: memset
+
+ex24: Getting user input (using functions that can also get file input)
+       -getting string and numerical input
+       -displaying a menu and getting categorial input with enums
+      lib: fgets, fscanf
+
+ex25: Basically it's a redo of ex24, except for the enum part, using a custom
+      simplified version of scanf. It's a demo of multi-variable arguments.
+        lib:  va_list (type), va_start, va_arg
+              fgetc, fgets, calloc, check_mem

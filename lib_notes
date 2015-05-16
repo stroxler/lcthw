@@ -1,0 +1,185 @@
+MEM ALLOCATION
+--------------
+void * malloc(size_t size) : stdlib
+    allocate memory for size_t bytes. return NULL if fail, or void * ptr to
+    the start of the block. Doesn't do anything to the allocated ram.
+void * calloc(size_t nmemb, size_t size) : stdlib
+    allocate (nmemb * size) bytes. return Null if fail, or void * ptr to the
+    start of the block. Zeroes out all bytes allocated.
+void * realloc(void * ptr, size_t size) : stdlib
+    reallocates memory; allows us to efficiently resize the block assigned
+    to ptr. If the new size is smaller than the old, it frees up the difference
+    between them. If the new size is bigger, it tries to expand the amount
+    allocated in-place, and failing that it will malloc, memcopy, and then
+    free the old pointer. If passed a null pointer, it is equivalent to malloc.
+void free(void * ptr) : stdlib
+    Used to free any pointer returned by any of the three above methods. Don't
+    use it on any other pointers.
+    Also, when moving to C++, be aware that objects created using new[] are
+    allocated using a different mechanism. You have to keep track of whether
+    you used a C library call to get the memory, and use free only if so. It is
+    not interchangable with delete[]
+
+MEM MODIFICATION
+----------------
+void * memset(void * ptr, int value, size_t num) : string
+    This one is kind of weird: it accepts an int for `value`, but then casts
+    it to unsigned char, which is one byte (so in many cases you'll see a char
+    used in the call). Then, it copies that byte into the first `num` memory
+    addresses following `ptr`.
+    It returns NULL if it fails, otherwise it returns `ptr`... also kind of
+    weird in my opinion, why not just return an error code?
+    Note that it lives in <string.h>, even though it's a direct RAM operation.
+    Probably because it's most common use it to set C-strings to be one char.
+void * memcpy(void * dest, const void * src, size_t n) : string
+    Note that dest comes *before* src. This is the opposite of what's typical
+    in shell commands, but tends to be typical of C library functions. It
+    copies the `n` bytes following `src` to the `n` bytes following `dest`.
+    If all goes well, it returns `dest`.
+
+STRING-NUMBER CONVERSION
+------------------------
+int atoi(char * str) : stdlib
+    Returns 0 if `str` doesn't start with an int, after discounting whitespace.
+    If `str` is invalid or if the int represented is outside of `int` range,
+    behavior is undefined (the docs suggest using strtol for a more robust
+    alternative)
+double atof(char * str) : stdlib
+    Behavior is basically analogous to atio's. It can handle exponentials
+    expressed using either e or E.
+In many cases you can avoid these by using scan functions, described below.
+
+GENERAL FILE OPERATIONS
+-----------------------
+FILE * fopen(const char * filename, const char * mode) : stdio
+    Return a FILE * pointer. On error, returns null.
+    Note that this is actually a wrapper around a lower-level operation that
+    returns a file descriptor which gets saved in the FILE structure. All other
+    fxxx functions are also wrappers around lower-level file descriptor based
+    functions.
+    The FILE object is basically a file descriptor plus a buffer, and is called
+    a 'stream' but should not be confused with C++ iostreams.
+    The mode options are 'r', 'w', 'a', and 'r+', 'w+', 'a+'. 
+      - 'r' and 'r+' will open the file and position the head at the start; 'r'
+        allows only reads whereas 'r+' allows both reads and writes.
+      - Similarly 'w' and 'w+' both truncate the file; 'w+' allows subsequent
+        reads whereas 'w' allows only writes.
+      - 'a' and 'a+' both position the head at the end; 'a' allows only writes
+        whereas 'a+' allows both reads and writes.
+    The semantics of interleaving reads and writes are somewhat complicated,
+    see http://pubs.opengroup.org/onlinepubs/009695399/functions/fopen.html.
+    Basically you either have to encounter EOF or reposition the head and/or
+    call fflush before you are allowed to switch back and forth. An example
+    of repositioning the head is the `rewind` call in ex17, which happens after
+    we read the db and before we write back to it.
+int fclose(FILE * f) : stdio
+    Returns 0 if the file closed successfully, otherwise an integer.
+int fflush(FILE * stream) : stdio
+    Returns 0 if file flushed successfully that is, all writes worked. You
+    don't need to call this before fclose or the end of a program; the stream
+    will automatically flush. Must be called before you can switch from file
+    input to file output.
+void rewind (FILE * stream) : stdio
+    Repositions the head [it's equivalent to fseek(stream, 0L, SEEK_SET) except
+    that fseek clears the errno].
+    It's not well-written in terms of error detection: it only tells you about
+    errors via errno, and it doesn't clear errno beforehand! Zed doesn't even
+    bother checking in ex17.
+int feof(FILE * stream) : stdio
+    Is the EOF indicator set for stream? Returns 0 iff the answer is no.
+    This is reset by a call to clearerr, rewind, fseek, fsetpos or freopen,
+    although several of these ops don't move the position indicator, in which
+    case the next I/O operation will probably set both this and the error
+    indicator.
+int ferror(FILE * stream) : stdio
+    Is the error indicator set (which indicates some preceding op failed)?
+    This is reset by a call to clearerr, rewind, fseek, fsetpos or freopen.
+
+
+BINARY IO WITH FILES
+--------------------
+    Note: Beginning Linux Programming points out that although you can read
+    and write binary data using fread and fwrite, the files are potentially
+    non-portable, so it is not recommended for structured data in a prod env.
+size_t fread(void * ptr, size_t size, size_t nitems, FILE * stream) : stdio
+    Writes (size * nitems) bytes from the file's current head to the
+    buffer pointed to by `ptr`, in chunks of size `size`. Returns the number
+    of chunks written. Typically the chunk size would be a record size here,
+    and if fread encounters EOF it will return fewer than `nitem` items.
+size_t fwrite(const void * ptr, size_t size, size_t nitems, FILE * stream)
+    Basically the inverse of fread. Records the number of records successfully
+    written; in general it shoudn't fail to write but it could if, e.g.,
+    disk space is inadequate.
+
+STRING IO WITH FILES
+--------------------
+int fprintf(FILE * stream, char * fmt, ...) : stdio
+    Pretty much the same as printf, but to an arbitrary stream instead
+    of just stdin. Note that you need this to use stderr. For most
+    purposes, this is the only string output function you need.
+    Returns the number of characters written.
+    There's also an sprintf which looks the same except it takes a char * and
+    returns the number of characters written not including the '\0', but you
+    need to be careful using sprintf because if you aren't careful with
+    the format and inputs you give it, it might overflow (there's no size lim).
+char * fgets(char * s, int n, FILE * STREAM) : stdio
+    Does pretty much what it says: gets the next `n-1` characters or up until
+      - a newline is encountered (which is added to s if it fits), or
+      - a '\0' is encountered, or
+      - and EOF is encountered.
+    It adds a trailing '\0'. Don't use gets; use fgets even on stdin b/c
+    gets doesn't have the `n` parameter and is therefore unsafe.
+int fscanf(FILE * stream, const char *fmt, ...)
+    All of the inputs in the `...` need to be pointers. Be very careful
+    that they have the correct types relative to the format string, if they
+    don't the compiler may not complain but you'll get a nasty crash.
+      - Returns the number of items successfully read (it will stop reading
+        the first time it encounters a failure). If EOF was encountered before
+        it read the first item, it will return EOF (which is usually -1) rather
+        than returning 0.
+      - There's also an sscanf which is pretty much the same but with a char *
+        instead of a FILE *.
+int fgetc(FILE * stream)
+    Gets the next character, returns it as an int but it should be safe to cast
+    If EOF is encountered, returns EOF.
+    - getc is identical except that it can be implemented as a macro, which
+      means that the expression you pass in for `stream` needs to not have side
+      effects.
+    - getchar() is a shortcut for fgetc(stdin); doesn't matter if it's a macro
+int fputc(int c, FILE * stream)
+    Writes a single character (passed as an int, but converted to unsigned
+    char before writing). Returns the char written, or EOF if there's an error.
+    - putc is identical except it can be a macro, so again make sure the args
+      have no side effects
+    - putchar(c) is a shortcut for putc(c, stdin). It can be a macro.
+
+ERROR-RELATED STUFF
+-------------------
+void exit(int status) : stdlib.h
+    Exit process with status
+void perror(const char * s) : stdio.h
+    First, prints `s` to stderr if s is not null.
+    Then, it looks up errno in an internal table and if errno is set, it prints
+    a human-readable message. Errno is set by system calls that err out.
+extern int errno : errno.h
+    Error code for your process. The only things you really need to know about
+    it are that 0 means 'no error', that various library calls set it on
+    error conditions, that a few of those calls use it as the *only* way they
+    communicate error conditions, and that perror knows how to interpret it.
+
+VARARGS
+-------
+va_list - the type used for varargs : stdarg.h
+void va_start(va_list argp, paramN) : stdarg.h
+    This is a macro, not a function. The second input needs to be the last
+    named argument, which va_start looks at to figure out where in ram to
+    start argp.
+void va_arg(va_list argp, type type) : stdarg.h
+    This is also a macro, since types are not first-class values in C. It
+    basically looks at the chunk of memory pointed to by argp, and casts the
+    next block of it to be of type `type`, then increments argp by the
+    appropriate number of bytes.
+void va_end() : stdarg.h
+    Macro to clean up any va_X related resources. Any function that uses
+    va_start or va_copy should use this macro in its cleanup phase.
+
