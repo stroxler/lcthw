@@ -183,3 +183,19 @@ void va_end() : stdarg.h
     Macro to clean up any va_X related resources. Any function that uses
     va_start or va_copy should use this macro in its cleanup phase.
 
+UNIX-SPECIFIC STUFF
+-------------------
+int access(const char * path, int indicator) : unistd.h
+    Checks whether the file exists (if indicator == F_OK, also in unistd.h)
+    or whether the current pid has a set of permissions on the file. The
+    permissions are R_OK, W_OK, X_OK, and to ask whether you have more than
+    one of them you use bitwise or before passing to `access`. Returns 0 if
+    you have access, -1 otherwise [WHYYYYY? WHY CAN'T SHIT BE CONSISTENT???]
+
+BSTRLIB
+-------
+(to-do... bstrlib seems like its super-useful for C so I'll add it.)
+
+APR
+---
+(to-do... actually I'm not sure whether apr is important enough to put here...)
