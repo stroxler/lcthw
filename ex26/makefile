@@ -10,6 +10,13 @@ CFLAGS=-g -Wall -I${PREFIX}/apr/include/apr-1 -I${PREFIX}/apr/include/apr-util-1
 # the system by modifying /etc/ld.conf.so.d and running ldconfig.
 # ...
 # I don't know what -pthread does. I googled a while and found nothing.
+# ...
+# the make doesn't actually work on my ubuntu machine. See the notes file I
+# added for discussion of what does work.
+# ...
+# The -pthread option, which you can grep for in the gcc man, says to compile
+# with thread support. I don't know if it's necessary; I successfully compiled
+# and it seemed to be working without this flag on my machine.
 LDFLAGS=-L${PREFIX}/apr/lib -lapr-1 -laprutil-1 -pthread
 
 all: clean devpkg
