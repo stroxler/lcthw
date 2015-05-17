@@ -1,0 +1,13 @@
+Part 1 is very small and simple examples, with minimal use of libraries,
+giving basic C syntax. It includes everything up to ex16, and covers everything
+up to pointers and structs.
+
+Part 2 covers a lot of basic libary usage, and some more advanced syntax
+and semantics. It includes dynamic memory, file I/O, varargs, function
+pointers. It also includes some of the interesting semantics of C that differ
+from languages with more abstraction: flexible casting, relying on byte
+orderings when casting between types that take different amounts of space,
+writing bytes directly to disk to make binary files. It also introduces
+Zed's debug macros.
+   (The most important exercises here are probably 17 and 19. 19 is the
+    biggest, and the only multi-file example.)
