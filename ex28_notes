@@ -1,0 +1,94 @@
+Exercise 28 is to create the c-skeleton. There's no code.
+
+Since I prefer not to pollute the c-skeleton with comments the way I have for
+the basic stuff, I'm writing notes in a separate file.
+
+A typical project has at a minimum these text files at the root:
+   Makefile - the makefile
+   LICENSE - obviously not needed technically, but a good habit to get into
+   README.md - notes on the projects. For released software this is typically
+               instructions on how to build and some quick-start docs for
+               users. In dev projects it might be oriented more toward
+               developers.
+
+The minimum directories for a typical project are these:
+   bin - executables and/or any libraries your project makes available go here
+         if you were making libraries available, you would need to add an
+         include directory, and keep your headers here. In LCTHW we are doing
+         simpler projects, so we will keep our .h files in src and not have
+         an include directory.
+   build - this is where .o files usually go
+   src - c source code. It's typical for this to have a flat structure in
+         C projects, although it doesn't have to. The makefile here can handle
+         nested directories in src.
+   tests - all files for automated tests go here:
+            -> source code *.c files. It's assumed there are no nested test
+               source directories.
+            -> compiled sources also wind up in this directory
+            -> there's a shell script runtests.sh that's part of the skeleton
+               -> It is used to run small stand-alone test programs that end
+                  in '_tests.c'. We will use a small macro-based test tool
+                  called miniunit, but for the most part C tests are just
+                  plain old programs, compiled and run the same as any other.
+               -> there do exist full-blown test frameworks for C++, similar
+                  to junit in spirit. I went through a tutorial once on using
+                  one of them with cmake.
+
+(For bigger real-world projects it's not unusual to add a .lib where you might
+put third-party statically-linked libraries, or an examples folder. Often there
+are more folders if you need non-code resources or you generate docs, etc)
+
+Makefile usage notes:
+ - The one thing you'll need to change by hand (assuming you don't need
+   extra functionality) when copying this skeleton is the YOUR_LIBRARY in
+   the TARGET line. Everything else should be handled automatically.
+ - If you want to add extra libraries, you can add any -I and -L flags to
+   OPTFLAGS (which are empty here), and any -l flags to OTPTLIBS (which
+   is empty here).
+     -> caveat: I'm not sure this will work on Ubuntu. When I tried adding
+        a LIBS variable to ex26 with the -l flags, it didn't seems to get
+        used.
+           Since I doubt Zed screwed this up, it might be that the LIBS
+        variable gets used by ar but not by gcc, which is why my modified
+        ex26 didn't pick it up.
+
+Makefile syntax and command notes notes
+ - The CFLAGS have some new stuff. -O2 is optimization, -Wextra gives
+   more warnings, -rdynamic changes some symbol table stuff for dynamic
+   linking. Note that debug messages are off; this makefile doesn't seem
+   to provide a way to turn them on without editing it.
+ - Wildcards work similarly here to in filename expansion in the shell.
+   The ** sandwiched between // says to recursively match any directory
+   hierarchy.
+ - $(patsubs pat1, pat2, $(VAR)) means take whatever's in var, do pattern
+   substitution where % plays the role of .* in most regexps, of pat1 to pat2.
+   We use it to generate the names of the .o files and binary files.
+ - In a makefile, $@ inside the indented block under a target refers to the
+   name of the make target. So e.g. under the $(TARGET): block it refers to
+   "build/libYOUR_LIBRARY.a"
+ - I'm about 80% sure that @mkdir is a platform-independent mdir
+ - The -fPIC in the build command makes 'position independent code', which
+   somehow affects linkage.
+     -> I'm not sure, btw, whether the changes to CFLAGS in $(TARGET) get
+        propogated to $(SO_TARGET) or not. You can find out, once you have
+        an actual project, by reading the output and seeing if the -fPIC is
+        there.
+ - The ar command is what builds a library from sources. 'rcs' are all
+   flags to the ar command; you can grep for them in the man page if you want.
+ - The ranlib command is supposedly not necessary anymore, although on older
+   versions of Unix it was needed to finalize some stuff in the archive.
+ - The -shared flag in gcc is the standard way to make a .so object
+ - .PHONY in a makefile tells make that the target is an action, not a file.
+   It's needed because otherwise make will see that test is a folder, and then
+   skip running tests if it hasn't changed. We don't want this to happen!
+ - The install command is a separate command. Somehow I didn't used to know
+   this.
+ - To understand the valgrind goal, you need to know two things. First,
+   if make is called without an argument, it executes the name of the first
+   goal it encounters that does not begin with a '.', wo in this case it will
+   execute $(TARGET). Second, the var $(MAKE) is how to call make from inside
+   a makefile. So this sets up a valgrind log and then calls make again. Then,
+   you can do valgrind ./some_binary and see what happens.
+ - The last command, the check command, checks for use of c lib functions
+   that are not buffer overflow safe.
+
