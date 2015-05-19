@@ -43,3 +43,23 @@ ex25: Basically it's a redo of ex24, except for the enum part, using a custom
       simplified version of scanf. It's a demo of multi-variable arguments.
         lib:  va_list (type), va_start, va_arg
               fgetc, fgets, calloc, check_mem
+
+ex26: this is devpkg. It's big and introduces a lot of stuff. The only new
+      system call is access (which checks permissions/existence of files), but
+      it introduces bstrlib and apr.
+
+ex27: I wrote some notes to go with his little example, but this is an
+      exercise which is mostly about coding standards and is worth rereads.
+
+ex28: This exercise was to create the c-skeleton. I wrote some notes on the
+      makefile and some related ideas.
+
+ex29: Demo of dynamic linking. I included a link in my notes to a great
+      blog post that discusses linking (both static and dynamic) in more detail
+      than Zed.
+        Zed includes this exercise, which is a nice demo of the simplest case,
+      as a one-shot intro because all his later exercises use static linking.
+        lib: dlopen, dlclose, dlsym, dlerror
+             These functions live in <dlfcn.h>.
+             This is the first library we have encountered which requires
+             linking to explicitly. Use the -ldl flag to link to it.

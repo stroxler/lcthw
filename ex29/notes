@@ -1,0 +1,28 @@
+I decided to write a shell script that demonstrates how to compile and run,
+rather than using a make file, mostly because that's how Zed suggested
+doing this.
+
+For a more in-depth discussion of linking, which can be a major issue
+in C and C++ development, see:
+  http://www.techytalk.info/c-cplusplus-library-programming-on-linux-part-one-static-libraries/
+He talks not just about using gcc and such, but also about how
+the softlinks should be done for setting up shared libraries, naming
+conventions, and other important stuff.
+
+I'm not terribly inclined to discuss the functions in detail. Their use
+here is fairly obvious, you can read the manuals at
+  http://man7.org/linux/man-pages/man3/dlopen.3.html
+
+dlerror is sort of similar to perror, but it doesn't print, instead it returns
+a c-string.
+
+The only weird things about it are that:
+  - the dynamic link handle is void *. This is really strange, don't know
+    what else to say
+  - This is the first library we've used which requires a -l flag. There are
+    lots of others, e.g. math; we just haven't encountered any before now.
+  - there are different options you can use on when linking symbols are
+    resolved. RTLD_NOW is non-lazy, which is stricter.
+      There are also some scope options you can set when loading, the default
+    scope is to keep symbols local, which is what you'll probably do in most
+    cases.
