@@ -1,0 +1,10 @@
+
+
+Starting Test Suite Tue May 19 03:07:44 EDT 2015
+================================================
+------> RUNNING: ./tests/example_tests
+A STRING: Hello
+HELLO
+hello
+ALL TESTS PASSED
+Tests run: 4

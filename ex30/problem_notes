@@ -1,0 +1,13 @@
+Unfortunately Zed's makefile did not work out-of-the box.
+
+It turns out that gnu make has a built-in solution to the problem
+of gcc flags being platform-dependent: implicit variables. Implicit
+variables like CC and CFLAGS are familiar, but the key to getting
+platform-independent linking is to use the two variables, which should
+be kept independent: LDFLAGS and LDLIBS. All of your -L type flags,
+saying which directories to search for libraries, should be in LDFLAGS.
+On the other hand it is very important to put the -l flags that give
+actual libraries in LDLIBS, because on some platforms like ubuntu they
+are *required* to be in a different position.
+
+My makefile now seems to work, and these example tests pass :)
