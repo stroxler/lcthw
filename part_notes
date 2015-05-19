@@ -1,8 +1,10 @@
-Part 1 is very small and simple examples, with minimal use of libraries,
+Part 1 : ex1 thru ex 15
+very small and simple examples, with minimal use of libraries,
 giving basic C syntax. It includes everything up to ex16, and covers everything
 up to pointers and structs.
 
-Part 2 covers a lot of basic libary usage, and some more advanced syntax
+Part 2 : ex17 thru ex 25
+covers a lot of basic libary usage, and some more advanced syntax
 and semantics. It includes dynamic memory, file I/O, varargs, function
 pointers. It also includes some of the interesting semantics of C that differ
 from languages with more abstraction: flexible casting, relying on byte
@@ -11,3 +13,14 @@ writing bytes directly to disk to make binary files. It also introduces
 Zed's debug macros.
    (The most important exercises here are probably 17 and 19. 19 is the
     biggest, and the only multi-file example.)
+
+Part 3 : ex26 thru ex31
+Starts off with ex26, which is by far the biggest project in the first part
+of the book and introduces using third-party libraries, making varous system
+calls (via apr, not natively), and compiling/linking nontrivial programs.
+ -> The remaining exercises cover some advanced C features like dynamic
+    loading, and an intermediate introduction to the core development toolset:
+    'real' makefiles, unit testing, debugging.
+ -> Since ex26 is a major turning point in the book, I pulled out a copy of
+    it into its own directory. The other 'major' project in this section is
+    ex31, which uses the full makefile to demo a simple test script.

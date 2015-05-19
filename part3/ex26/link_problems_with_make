@@ -1,0 +1,23 @@
+Unfortunately, this does not compile and so far I cannot work out why. The
+linker does not seem to find apr, in spite of me having added it in
+/etc/ld.conf.so.d/libc and having run ldconfig
+
+I also compiled Zed's code off github, and the same problems occurred, so
+I'm pretty sure it is a system administration issue, not a problem with
+my code (which compiles fine, it just doesn't link) or my makefile
+
+I played around a bit, and found that this command produces a working a.out:
+cc -g -Wall -I/usr/local/apr/include/apr-1  -I/usr/local/apr/include/apr-util-1  -L/usr/local/apr/lib  -o devpkg devpkg.c bstrlib.o db.o shell.o commands.o -lapr-1 -laprutil-1
+
+What's different here from what make is doing? Make puts all of the link
+flags together, and they come before the source files. For some reason, at
+least on this Ubuntu distro, gcc seems to want the -l options to come *after*
+the file list.
+
+It seems a bit absurd that the make default ordering would not work, but
+such is life I guess. As a result, to compile this, just run the command
+above by hand. :/
+
+It's possible to fix up the makefile to work for this, but you need to use
+more variables and more advanced makefile features, which I'm not going to
+do yet because it's covered later in LCTHW.
