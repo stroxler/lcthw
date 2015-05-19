@@ -1,0 +1,43 @@
+ZEDS GENERAL PHILOSOPHY ON DEBUGGING
+------------------------------------
+
+The number one tip is the same as in a lot of other troubleshooting: focus
+first and foremost on reducing the problem space by trying to bisect the
+problem and/or rule out anything that's quick and easy to check.
+
+It's highly recommended to keep notes of what you've tried and the outcome. I
+usually haven't done this, and it can be painful because often you wind up
+retracing your steps or struggling to remember details.
+  (Even better would be to make a git branch with the bug, and then make
+a bunch of dbg_X branches which demo the things you tried to debug, so that you
+can revisit them. But keeping notes is a good start.)
+
+Don't forget to use valgrind. It can find a whole host of problems that other
+tools might miss, and also memory leaks that might not even be noticed when
+testing, since test problems are usually small.
+
+GDB VERY BASIC DEMO
+-------------------
+
+Suggested commands to get the really basic idea:
+  - from the shell do `gdb ./exe`
+  - then, type `list`
+  - then set a break point: `break exe.c:7`
+  - then hit `run` (you would give args here if you needed args)
+  - it will run until the breakpoint. Then you can type, e.g., `p i` to see
+    the value of i.
+
+Obviously it's way more powerful than this; it can even attach to running
+processes! look up Zed's page for example 31 to see how.
+
+But since most C debugging is better done via Zed's debug macros, I'm not going
+to go into a ton of detail. Just be aware that when you need it, gdb can be
+pretty cool :)
+
+GDB BE AWARE OF COOL CAPABILITIES
+  - You can use the --args flag when calling gdb to pass args to the
+    executable. This is nicer than doing it in run because it's more scriptable,
+    if you are likely to keep tweaking a program and then running gdb.
+  - You can use `gdb --batch --ex r --ex bt --ex q --args` to get a backtrace
+    on a crashing program. I don't know details, but something to look into
+    if I run into a certain class of problems down the road.
