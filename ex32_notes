@@ -1,0 +1,11 @@
+ex32 adds some code in list.h and list.c for the lcthw library.
+
+I ran into some build issues getting the tests to statically link to the
+library. Firstly, the makefile didn't have the appropriate -L and -l flags
+for this.
+
+Secondly, it appears that at least in ubuntu, default linking is dynamic.
+I had to add -static to the CFLAGS in order to get the test code to statically
+link to liblcthw.a instead of trying to dynamically link with liblcthw.so
+(which fails because I would need it to be added to my link directory, either
+via an environment variable or via system config).
