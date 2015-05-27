@@ -1,0 +1,15 @@
+My first attempt at swap in bubble sort was to actually swap nodes, and even
+after a solid 40 minutes or so of debugging I couldn't get it to work.
+
+Be aware of a conceptual flaw in the merge sort: it returns a new list given
+a list of two or more entries, but with size 0 and 1 lists it returns a
+reference to the original list. This is efficient and 'works', but makes
+keeping track of references hard. You are likely to either leak memory if you
+don't aggressively clean up, or to get double free errors if you do.
+
+The solution is to always check whether the answer is equal to the original,
+in the context of the current code. But a better solution would be to force
+a copy in the top-level call.
+
+I added a List_print which eventually ought to be touched up and added to
+list.h
