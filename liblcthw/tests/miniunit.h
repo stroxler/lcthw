@@ -1,4 +1,3 @@
-#undef NDEBUG
 #ifndef _miniunit_h
 #define _miniunit_h
 
